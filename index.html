@@ -1,320 +1,648 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head><meta charset="UTF-8"><title>法語 + PTE Core 備考週計劃</title></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>法語 + PTE Core 備考週計劃</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
+    background: #F8F7F4;
+    color: #1C1B19;
+  }
+  .page-wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px 72px; }
+
+  /* Nav pills */
+  .nav-pills .nav-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6B7280;
+    border: 1.5px solid #E5E3DF;
+    border-radius: 99px;
+    padding: 6px 16px;
+    background: #fff;
+    transition: all .15s;
+  }
+  .nav-pills .nav-link:hover { color: #1C1B19; border-color: #9CA3AF; }
+  .nav-pills .nav-link.active { background: #1C1B19; color: #fff; border-color: #1C1B19; }
+
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; display: inline-block; }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+
+  /* Week grid */
+  .week-grid {
+    display: grid;
+    grid-template-columns: 72px repeat(7, 1fr);
+    border: 1.5px solid #E5E3DF;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    margin-bottom: 4px;
+  }
+  .wc {
+    padding: 9px 7px;
+    border-right: 1px solid #EDEBE7;
+    border-bottom: 1px solid #EDEBE7;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .wc:nth-child(8n) { border-right: none; }
+  .week-grid > .wc:nth-last-child(-n+8) { border-bottom: none; }
+  .wc.hd { font-weight: 600; font-size: 11px; color: #9CA3AF; background: #F8F7F4; text-align: center; padding: 8px 4px; }
+  .wc.rh { font-weight: 600; font-size: 10.5px; color: #6B7280; background: #F8F7F4; display: flex; align-items: center; padding-left: 10px; }
+  .wc.fr  { background: #E6F5EE; color: #065F46; }
+  .wc.pte { background: #EBF4FD; color: #1E40AF; }
+  .wc.bth { background: #EDE9FE; color: #4C1D95; }
+  .wc.rst { background: #F5F4F2; color: #BDBAB5; text-align: center; }
+  .wc.dev { background: #FEF3C7; color: #92400E; }
+
+  /* Milestone / todo card */
+  .ms-card {
+    background: #fff;
+    border: 1.5px solid #E5E3DF;
+    border-radius: 12px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.03);
+    cursor: pointer;
+    user-select: none;
+    transition: opacity .2s, border-color .2s;
+  }
+  .ms-card:hover { border-color: #C4C2BD; }
+  .ms-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .ms-body { flex: 1; }
+  .ms-title { font-weight: 600; font-size: 13.5px; color: #1C1B19; margin-bottom: 3px; transition: color .2s; }
+  .ms-desc  { font-size: 12.5px; color: #6B7280; line-height: 1.55; transition: color .2s; }
+
+  /* Todo checkbox */
+  .todo-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid #D1CFC9;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+  }
+  .todo-check:hover { border-color: #059669; }
+  .todo-check:checked {
+    background: #059669;
+    border-color: #059669;
+  }
+  .todo-check:checked::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 4px; top: 1.5px;
+    width: 5px; height: 9px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(40deg);
+  }
+
+  /* Done state */
+  .ms-card.done {
+    opacity: .55;
+    background: #F8F7F4;
+  }
+  .ms-card.done .ms-title { text-decoration: line-through; color: #9CA3AF; }
+  .ms-card.done .ms-desc  { color: #BDBAB5; }
+
+  /* Resource card */
+  .res-card {
+    background: #fff;
+    border: 1.5px solid #E5E3DF;
+    border-radius: 12px;
+    padding: 14px 16px;
+    height: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,.03);
+  }
+  .res-label { font-size: 10px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 9px; }
+  .res-item { font-size: 12.5px; color: #6B7280; margin-bottom: 4px; padding-left: 10px; position: relative; }
+  .res-item::before { content: '·'; position: absolute; left: 2px; color: #BDBAB5; font-size: 14px; line-height: 1; top: 0; }
+
+  /* Vocab table */
+  .vocab-wrap {
+    background: #fff;
+    border: 1.5px solid #E5E3DF;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .vocab-wrap .wc { font-size: 12px; }
+</style>
+</head>
 <body>
 
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-.wrap { padding: 1rem 0; font-size: 13px; }
-.phase-tabs { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
-.ptab { padding: 6px 14px; border-radius: 99px; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-size: 12px; font-weight: 500; transition: all .15s; }
-.ptab.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
-.phase-content { display: none; }
-.phase-content.active { display: block; }
-.week-grid { display: grid; grid-template-columns: 80px repeat(7, 1fr); gap: 0; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 1rem; }
-.cell { padding: 8px 6px; border-right: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 11px; line-height: 1.4; }
-.cell:last-child, .cell:nth-child(8n) { border-right: none; }
-.cell.header { font-weight: 500; font-size: 11px; color: var(--color-text-secondary); background: var(--color-background-secondary); text-align: center; }
-.cell.row-head { font-weight: 500; color: var(--color-text-secondary); font-size: 11px; background: var(--color-background-secondary); display: flex; align-items: center; }
-.cell.fr { background: #E1F5EE; color: #085041; }
-.cell.pte { background: #E6F1FB; color: #0C447C; }
-.cell.rest { background: var(--color-background-secondary); color: var(--color-text-tertiary); text-align: center; }
-.cell.both { background: #EEEDFE; color: #3C3489; }
-.milestone { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
-.ms-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-.ms-title { font-weight: 500; font-size: 13px; color: var(--color-text-primary); }
-.ms-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.5; }
-.resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin-bottom: 1rem; }
-.res-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 12px; }
-.res-label { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
-.res-item { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 3px; padding-left: 8px; position: relative; }
-.res-item::before { content: '·'; position: absolute; left: 1px; color: var(--color-text-tertiary); }
-.legend { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-secondary); }
-.leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-.section-label { font-size: 11px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; margin-top: 4px; }
-</style>
+<div class="page-wrap">
 
-<div class="wrap">
-<h2 class="sr-only">法語 + PTE Core 備考週計劃</h2>
-
-<div class="phase-tabs">
-  <button class="ptab active" onclick="showPhase('p0')">7月（上班期）</button>
-  <button class="ptab" onclick="showPhase('p1')">8～9月（A2）</button>
-  <button class="ptab" onclick="showPhase('p2')">10～11月（B1）</button>
-  <button class="ptab" onclick="showPhase('p3')">12月（衝刺）</button>
-  <button class="ptab" onclick="showPhase('vocab')">Lingvist 進度</button>
-  <button class="ptab" onclick="showPhase('res')">資源清單</button>
-</div>
-
-<div id="p0" class="phase-content active">
-  <div class="legend">
-    <div class="leg"><div class="leg-dot" style="background:#5DCAA5"></div>法語</div>
-    <div class="leg"><div class="leg-dot" style="background:#85B7EB"></div>PTE Core</div>
-    <div class="leg"><div class="leg-dot" style="background:#AFA9EC"></div>兩者</div>
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-1" style="font-size:22px;letter-spacing:-.02em">法語 + PTE Core 備考週計劃</h1>
+    <p class="mb-0" style="font-size:13px;color:#9CA3AF">2026 年 6 月 ➜ 2027 年 1 月 &nbsp;·&nbsp; TCF Canada CLB 7 目標</p>
   </div>
-  <div class="week-grid">
-    <div class="cell header"></div>
-    <div class="cell header">一</div><div class="cell header">二</div><div class="cell header">三</div>
-    <div class="cell header">四</div><div class="cell header">五</div><div class="cell header">六</div><div class="cell header">日</div>
 
-    <div class="cell row-head">白天<br>上班</div>
-    <div class="cell rest">上班</div><div class="cell rest">上班</div><div class="cell rest">上班</div>
-    <div class="cell rest">上班</div><div class="cell rest">上班</div><div class="cell rest">-</div><div class="cell rest">-</div>
+  <!-- Tabs -->
+  <ul class="nav nav-pills d-flex flex-wrap gap-2 mb-4" id="planTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#p-1" type="button">6月（準備期）</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#p0"  type="button">7月（上班期）</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#p1"  type="button">8～9月（A2）</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#p2"  type="button">10～11月（B1）</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#p3"  type="button">12月（衝刺）</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#vocab" type="button">Lingvist 進度</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#res"  type="button">資源清單</button></li>
+  </ul>
 
-    <div class="cell row-head">午休<br>20 min</div>
-    <div class="cell pte">PTE<br>Read Aloud x5</div>
-    <div class="cell fr">Lingvist<br>60 字卡</div>
-    <div class="cell pte">PTE<br>Repeat Sent. x5</div>
-    <div class="cell fr">Lingvist<br>60 字卡</div>
-    <div class="cell pte">PTE<br>Write Email x2</div>
-    <div class="cell rest">-</div><div class="cell rest">-</div>
+  <div class="tab-content">
 
-    <div class="cell row-head">晚上</div>
-    <div class="cell fr">密集班<br>2hr</div>
-    <div class="cell pte">PTE 題型<br>45 min</div>
-    <div class="cell fr">密集班<br>2hr</div>
-    <div class="cell pte">PTE 題型<br>45 min</div>
-    <div class="cell fr">密集班<br>2hr</div>
-    <div class="cell both">A1 筆記複習<br>1hr + Lingvist</div>
-    <div class="cell fr">密集班筆記整理<br>+ 預習下週</div>
-  </div>
-  <div class="section-label">7月里程碑</div>
-  <div class="milestone"><div class="ms-dot" style="background:#3B8BD4"></div><div><div class="ms-title">7月第2週</div><div class="ms-desc">PTE Core 模擬測一套，確認分數落點</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#1D9E75"></div><div><div class="ms-title">7月底</div><div class="ms-desc">考 PTE Core，目標 CLB 9。A1 11～36 課筆記全部複習完畢</div></div></div>
-</div>
+    <!-- ── 6月 準備期 ── -->
+    <div class="tab-pane fade show active" id="p-1">
+      <div class="d-flex gap-3 mb-3 flex-wrap">
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#3B82F6"></span>PTE Core</span>
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#059669"></span>法語 A1</span>
+      </div>
+      <div class="week-grid mb-4">
+        <div class="wc hd"></div>
+        <div class="wc hd">一</div><div class="wc hd">二</div><div class="wc hd">三</div>
+        <div class="wc hd">四</div><div class="wc hd">五</div><div class="wc hd">六</div><div class="wc hd">日</div>
 
-<div id="p1" class="phase-content">
-  <div class="section-label">每日時間分配（全職，6 hr）</div>
-  <div class="week-grid">
-    <div class="cell header"></div>
-    <div class="cell header">一</div><div class="cell header">二</div><div class="cell header">三</div>
-    <div class="cell header">四</div><div class="cell header">五</div><div class="cell header">六</div><div class="cell header">日</div>
+        <div class="wc rh">白天<br>上班</div>
+        <div class="wc rst">上班</div><div class="wc rst">上班</div><div class="wc rst">上班</div>
+        <div class="wc rst">上班</div><div class="wc rst">上班</div><div class="wc rst">—</div><div class="wc rst">—</div>
 
-    <div class="cell row-head">早上<br>9-11</div>
-    <div class="cell fr">你好法語 A2<br>2 課精聽</div>
-    <div class="cell fr">你好法語 A2<br>2 課精聽</div>
-    <div class="cell fr">你好法語 A2<br>2 課精聽</div>
-    <div class="cell fr">你好法語 A2<br>2 課精聽</div>
-    <div class="cell fr">你好法語 A2<br>2 課精聽</div>
-    <div class="cell fr">本週課程<br>複習</div>
-    <div class="cell rest">休息</div>
+        <div class="wc rh">午休<br>20 min</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）</div>
+        <div class="wc rst">—</div><div class="wc rst">—</div>
 
-    <div class="cell row-head">上午<br>11-12</div>
-    <div class="cell fr">筆記整理<br>+ Lingvist 新字</div>
-    <div class="cell fr">語法練習<br>動詞變位</div>
-    <div class="cell fr">筆記整理<br>+ Lingvist 新字</div>
-    <div class="cell fr">語法練習<br>句型</div>
-    <div class="cell fr">筆記整理<br>+ Lingvist 新字</div>
-    <div class="cell fr">Lingvist<br>週複習</div>
-    <div class="cell rest">休息</div>
+        <div class="wc rh">下午</div>
+        <div class="wc rst">上班</div><div class="wc rst">上班</div><div class="wc rst">上班</div>
+        <div class="wc rst">上班</div><div class="wc rst">上班</div>
+        <div class="wc pte">PTE 介紹<br>影片 1 hr</div>
+        <div class="wc fr">A1 單字<br>抄寫（5課）<br>+ 複習</div>
 
-    <div class="cell row-head">下午<br>14-16</div>
-    <div class="cell fr">閱讀練習<br>Bonjour de France</div>
-    <div class="cell fr">聽力練習<br>TV5 影片</div>
-    <div class="cell fr">閱讀練習</div>
-    <div class="cell fr">口說跟讀<br>shadowing 30min</div>
-    <div class="cell fr">閱讀練習</div>
-    <div class="cell fr">口說跟讀<br>shadowing</div>
-    <div class="cell rest">休息</div>
-
-    <div class="cell row-head">傍晚<br>16-17</div>
-    <div class="cell fr">Lingvist<br>60 字卡</div>
-    <div class="cell fr">口說跟讀<br>20 min</div>
-    <div class="cell fr">Lingvist<br>60 字卡</div>
-    <div class="cell fr">iTalki 家教<br>1 hr（9月起）</div>
-    <div class="cell fr">Lingvist<br>60 字卡</div>
-    <div class="cell fr">自由練習</div>
-    <div class="cell rest">休息</div>
-  </div>
-  <div class="section-label">里程碑</div>
-  <div class="milestone"><div class="ms-dot" style="background:#1D9E75"></div><div><div class="ms-title">8月底</div><div class="ms-desc">你好法語 A2 前半段完成，開始 iTalki 口說家教（每週 1 次）</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#639922"></div><div><div class="ms-title">9月中</div><div class="ms-desc">A2 全部課程完成，做一次 TCF 模擬題評估程度</div></div></div>
-</div>
-
-<div id="p2" class="phase-content">
-  <div class="section-label">每日時間分配（全職，6 hr）</div>
-  <div class="week-grid">
-    <div class="cell header"></div>
-    <div class="cell header">一</div><div class="cell header">二</div><div class="cell header">三</div>
-    <div class="cell header">四</div><div class="cell header">五</div><div class="cell header">六</div><div class="cell header">日</div>
-
-    <div class="cell row-head">早上<br>9-11</div>
-    <div class="cell fr">B1 語法書<br>Grammaire prog.</div>
-    <div class="cell fr">RFI 慢速法語<br>閱讀 + 聽力</div>
-    <div class="cell fr">B1 語法書</div>
-    <div class="cell fr">RFI 閱讀<br>+ 聽力</div>
-    <div class="cell fr">B1 語法書</div>
-    <div class="cell fr">TCF 模擬<br>聽力 1 套</div>
-    <div class="cell rest">休息</div>
-
-    <div class="cell row-head">上午<br>11-12</div>
-    <div class="cell fr">Podcast<br>Français Authentique</div>
-    <div class="cell fr">Lingvist 複習</div>
-    <div class="cell fr">Podcast 30min</div>
-    <div class="cell fr">Lingvist 複習</div>
-    <div class="cell fr">Podcast 30min</div>
-    <div class="cell fr">模擬題檢討</div>
-    <div class="cell rest">休息</div>
-
-    <div class="cell row-head">下午<br>14-16</div>
-    <div class="cell fr">口說 iTalki<br>家教 1hr</div>
-    <div class="cell fr">閱讀練習<br>B1 文章</div>
-    <div class="cell fr">shadowing<br>30 min</div>
-    <div class="cell fr">口說 iTalki<br>家教 1hr</div>
-    <div class="cell fr">閱讀練習</div>
-    <div class="cell fr">TCF 閱讀<br>模擬 1 套</div>
-    <div class="cell rest">休息</div>
-
-    <div class="cell row-head">傍晚<br>16-17</div>
-    <div class="cell fr">寫作練習<br>短文 200字</div>
-    <div class="cell fr">口說自錄<br>評分</div>
-    <div class="cell fr">Lingvist 複習</div>
-    <div class="cell fr">寫作練習</div>
-    <div class="cell fr">本週總複習</div>
-    <div class="cell fr">自由輸入</div>
-    <div class="cell rest">休息</div>
-  </div>
-  <div class="section-label">里程碑</div>
-  <div class="milestone"><div class="ms-dot" style="background:#BA7517"></div><div><div class="ms-title">10月底</div><div class="ms-desc">TCF 模擬聽力 + 閱讀確認達 CLB 7 分數帶，口說家教每週 2 次</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#D85A30"></div><div><div class="ms-title">11月底</div><div class="ms-desc">報名 TCF Canada 考試，四技全部模擬一次，找出弱項</div></div></div>
-</div>
-
-<div id="p3" class="phase-content">
-  <div class="section-label">衝刺期節奏（每天 5～6 hr，保留體力）</div>
-  <div class="week-grid">
-    <div class="cell header"></div>
-    <div class="cell header">一</div><div class="cell header">二</div><div class="cell header">三</div>
-    <div class="cell header">四</div><div class="cell header">五</div><div class="cell header">六</div><div class="cell header">日</div>
-
-    <div class="cell row-head">早上</div>
-    <div class="cell fr">TCF 全套<br>模擬（聽+讀）</div>
-    <div class="cell fr">弱項專攻</div>
-    <div class="cell fr">TCF 全套<br>模擬</div>
-    <div class="cell fr">弱項專攻</div>
-    <div class="cell fr">口說模擬<br>iTalki 批改</div>
-    <div class="cell fr">輕量複習</div>
-    <div class="cell rest">完全休息</div>
-
-    <div class="cell row-head">下午</div>
-    <div class="cell fr">模擬檢討<br>+ Lingvist</div>
-    <div class="cell fr">口說練習<br>錄音自評</div>
-    <div class="cell fr">模擬檢討</div>
-    <div class="cell fr">寫作練習<br>+ 批改</div>
-    <div class="cell fr">Lingvist 複習</div>
-    <div class="cell fr">Anki 只</div>
-    <div class="cell rest">完全休息</div>
-  </div>
-  <div class="section-label">考前最後一週</div>
-  <div class="milestone"><div class="ms-dot" style="background:#E24B4A"></div><div><div class="ms-title">考前 7 天</div><div class="ms-desc">停止做新模擬題，只複習已錯題 + Lingvist 熟字</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#888780"></div><div><div class="ms-title">考前 2 天</div><div class="ms-desc">完全放鬆，確認考場地點、帶什麼證件、幾點到</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#1D9E75"></div><div><div class="ms-title">1月初</div><div class="ms-desc">TCF Canada — 目標 CLB 7 全科達標</div></div></div>
-</div>
-
-<div id="vocab" class="phase-content">
-  <div class="section-label">Lingvist 每月單字累積目標（60 張/日，含重複）</div>
-  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:1rem;">
-    <div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:0;">
-      <div class="cell header">月份</div>
-      <div class="cell header">累積新單字</div>
-      <div class="cell header">約當程度</div>
-      <div class="cell header">說明</div>
-
-      <div class="cell row-head">7月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~750 字</div>
-      <div class="cell fr">A1 結尾</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">上班期，Lingvist 主要在午休 + 零碎時間</div>
-
-      <div class="cell row-head">8月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~1,500 字</div>
-      <div class="cell fr">A2 打底</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">全職學習，新字比例最高（~50%）</div>
-
-      <div class="cell row-head">9月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~2,250 字</div>
-      <div class="cell fr">A2+</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">開始 iTalki，詞彙開始能支撐口說</div>
-
-      <div class="cell row-head">10月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~3,000 字</div>
-      <div class="cell fr">B1 門口 ✦</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">TCF CLB 7 詞彙量門檻（3,000–4,000）</div>
-
-      <div class="cell row-head">11月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~3,750 字</div>
-      <div class="cell fr">B1</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">重複比例升高，專攻熟字鞏固</div>
-
-      <div class="cell row-head">12月</div>
-      <div class="cell fr" style="text-align:center;font-weight:600">~4,500 字</div>
-      <div class="cell fr">B1–B2</div>
-      <div class="cell fr" style="font-size:10px;color:#085041">衝刺期，Lingvist 降至維持模式</div>
-
-      <div class="cell row-head">1月初</div>
-      <div class="cell both" style="text-align:center;font-weight:600">~5,000 字</div>
-      <div class="cell both">庫存跑完 🎯</div>
-      <div class="cell both" style="font-size:10px;color:#3C3489">TCF Canada 考試月，Lingvist 總庫全覆蓋</div>
+        <div class="wc rh">晚上</div>
+        <div class="wc pte">PTE 介紹<br>影片 1 hr</div>
+        <div class="wc fr">A1 筆記<br>整理抄寫</div>
+        <div class="wc pte">PTE 介紹<br>影片 1 hr</div>
+        <div class="wc fr">A1 筆記<br>整理抄寫</div>
+        <div class="wc fr">A1 筆記<br>整理抄寫</div>
+        <div class="wc fr">A1 單字<br>本週複習</div>
+        <div class="wc fr">預習下週<br>+ 筆記整理</div>
+      </div>
+      <p class="section-label">6月待辦</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-pm1-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#3B82F6"></div>
+          <div class="ms-body"><div class="ms-title">看完 PTE Core 介紹影片（共 3 hr）</div><div class="ms-desc">看完所有題型介紹影片（Read Aloud、Repeat Sentence、Write Email、Summarize Spoken Text），了解評分邏輯與答題格式，整理成一份題型筆記備查。</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-pm1-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#059669"></div>
+          <div class="ms-body"><div class="ms-title">A1 筆記單字全部手寫起來</div><div class="ms-desc">每天抄寫 5 課單字，將密集班 A1 課程（11～36 課）的筆記整理抄寫一遍，重點標記動詞變位與高頻單字，為 7 月考前複習打底。</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-pm1-2" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#9CA3AF"></div>
+          <div class="ms-body"><div class="ms-title">6月底前完成</div><div class="ms-desc">進入 7 月上班期前，確保 PTE 題型已有基本認識，A1 筆記已整理完畢，可直接進入考前衝刺模式。</div></div>
+        </div>
+      </div>
     </div>
+
+    <!-- ── 7月 上班期 ── -->
+    <div class="tab-pane fade" id="p0">
+      <div class="d-flex gap-3 mb-3 flex-wrap">
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#059669"></span>法語</span>
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#3B82F6"></span>PTE Core</span>
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#7C3AED"></span>兩者</span>
+        <span class="d-flex align-items-center gap-2" style="font-size:12.5px;color:#6B7280"><span class="leg-dot" style="background:#F59E0B"></span>Docker / K8s</span>
+      </div>
+      <div class="week-grid mb-4">
+        <div class="wc hd"></div>
+        <div class="wc hd">一</div><div class="wc hd">二</div><div class="wc hd">三</div>
+        <div class="wc hd">四</div><div class="wc hd">五</div><div class="wc hd">六</div><div class="wc hd">日</div>
+
+        <div class="wc rh">上午<br>9–12</div>
+        <div class="wc fr">看電子報<br>法文 A1</div>
+        <div class="wc fr">看電子報<br>法文 A1</div>
+        <div class="wc fr">看電子報<br>法文 A1</div>
+        <div class="wc fr">看電子報<br>法文 A1</div>
+        <div class="wc fr">看電子報<br>法文 A1</div>
+        <div class="wc fr">看電子報<br>+ 聽 mp3</div>
+        <div class="wc fr">看電子報<br>+ 聽 mp3</div>
+
+        <div class="wc rh">午休<br>20 min</div>
+        <div class="wc fr">Lingvist<br>60 字卡</div>
+        <div class="wc fr">Podcast<br>聆聽</div>
+        <div class="wc fr">Lingvist<br>60 字卡</div>
+        <div class="wc fr">Podcast<br>聆聽</div>
+        <div class="wc pte">PTE<br>Write Email ×2</div>
+        <div class="wc rst">—</div><div class="wc rst">—</div>
+
+        <div class="wc rh">下午<br>14–16</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀 + 聆聽</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀</div>
+        <div class="wc pte">PTE 模擬<br>1 套</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀</div>
+
+        <div class="wc rh">下午<br>16–17</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+        <div class="wc dev">Docker / K8s<br>repo 實作</div>
+
+        <div class="wc rh">晚上<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">7/1–8/28</span></div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc pte">PTE 題型<br>45 min</div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc pte">PTE 題型<br>45 min</div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc bth">A1 筆記複習<br>1 hr + Lingvist</div>
+        <div class="wc fr">密集班筆記整理<br>+ 預習下週</div>
+      </div>
+      <p class="section-label">7月里程碑</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-p0-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#3B82F6"></div>
+          <div class="ms-body"><div class="ms-title">7月第 2 週</div><div class="ms-desc">PTE Core 模擬測一套，確認分數落點</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p0-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#059669"></div>
+          <div class="ms-body"><div class="ms-title">7月底</div><div class="ms-desc">考 PTE Core，目標 CLB 9。A1 11～36 課筆記全部複習完畢</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p0-2" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#F59E0B"></div>
+          <div class="ms-body"><div class="ms-title">Docker / K8s 自學</div><div class="ms-desc">下午時段跟著 <a href="https://github.com/ericboy0224/learn-docker-and-k8s" target="_blank" rel="noopener" style="color:#B45309">learn-docker-and-k8s</a> repo 實作 Docker 與 Kubernetes 基礎，工作技能與法語並行。</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 8～9月 A2 ── -->
+    <div class="tab-pane fade" id="p1">
+      <p class="section-label" style="margin-top:0">每日時間分配（全職，6 hr）</p>
+      <div class="week-grid mb-4">
+        <div class="wc hd"></div>
+        <div class="wc hd">一</div><div class="wc hd">二</div><div class="wc hd">三</div>
+        <div class="wc hd">四</div><div class="wc hd">五</div><div class="wc hd">六</div><div class="wc hd">日</div>
+
+        <div class="wc rh">早上<br>9–11</div>
+        <div class="wc fr">你好法語 A2<br>2 課精聽</div>
+        <div class="wc fr">你好法語 A2<br>2 課精聽</div>
+        <div class="wc fr">你好法語 A2<br>2 課精聽</div>
+        <div class="wc fr">你好法語 A2<br>2 課精聽</div>
+        <div class="wc fr">你好法語 A2<br>2 課精聽</div>
+        <div class="wc fr">本週課程<br>複習</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">上午<br>11–12</div>
+        <div class="wc fr">筆記整理<br>+ Lingvist 新字</div>
+        <div class="wc fr">語法練習<br>動詞變位</div>
+        <div class="wc fr">筆記整理<br>+ Lingvist 新字</div>
+        <div class="wc fr">語法練習<br>句型</div>
+        <div class="wc fr">筆記整理<br>+ Lingvist 新字</div>
+        <div class="wc fr">Lingvist<br>週複習</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">下午<br>14–16</div>
+        <div class="wc fr">閱讀練習<br>Bonjour de France</div>
+        <div class="wc fr">聽力練習<br>TV5 影片</div>
+        <div class="wc fr">閱讀練習</div>
+        <div class="wc fr">口說跟讀<br>shadowing 30 min</div>
+        <div class="wc fr">閱讀練習</div>
+        <div class="wc fr">口說跟讀<br>shadowing</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">傍晚<br>16–17</div>
+        <div class="wc fr">Lingvist<br>60 字卡</div>
+        <div class="wc fr">口說跟讀<br>20 min</div>
+        <div class="wc fr">Lingvist<br>60 字卡</div>
+        <div class="wc fr">iTalki 家教<br>1 hr（9月起）</div>
+        <div class="wc fr">Lingvist<br>60 字卡</div>
+        <div class="wc fr">自由練習</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">晚上<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">8月止</span></div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc rst">—</div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc rst">—</div>
+        <div class="wc fr">密集班<br>2 hr</div>
+        <div class="wc rst">—</div>
+        <div class="wc rst">—</div>
+      </div>
+      <p class="section-label">里程碑</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-p1-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#059669"></div>
+          <div class="ms-body"><div class="ms-title">8月底</div><div class="ms-desc">你好法語 A2 前半段完成，開始 iTalki 口說家教（每週 1 次）</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p1-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#84CC16"></div>
+          <div class="ms-body"><div class="ms-title">9月中</div><div class="ms-desc">A2 全部課程完成，做一次 TCF 模擬題評估程度</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 10～11月 B1 ── -->
+    <div class="tab-pane fade" id="p2">
+      <p class="section-label" style="margin-top:0">每日時間分配（全職，6 hr）</p>
+      <div class="week-grid mb-4">
+        <div class="wc hd"></div>
+        <div class="wc hd">一</div><div class="wc hd">二</div><div class="wc hd">三</div>
+        <div class="wc hd">四</div><div class="wc hd">五</div><div class="wc hd">六</div><div class="wc hd">日</div>
+
+        <div class="wc rh">早上<br>9–11</div>
+        <div class="wc fr">B1 語法書<br>Grammaire prog.</div>
+        <div class="wc fr">RFI 慢速法語<br>閱讀 + 聽力</div>
+        <div class="wc fr">B1 語法書</div>
+        <div class="wc fr">RFI 閱讀<br>+ 聽力</div>
+        <div class="wc fr">B1 語法書</div>
+        <div class="wc fr">TCF 模擬<br>聽力 1 套</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">上午<br>11–12</div>
+        <div class="wc fr">Podcast<br>Français Authentique</div>
+        <div class="wc fr">Lingvist 複習</div>
+        <div class="wc fr">Podcast 30 min</div>
+        <div class="wc fr">Lingvist 複習</div>
+        <div class="wc fr">Podcast 30 min</div>
+        <div class="wc fr">模擬題檢討</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">下午<br>14–16</div>
+        <div class="wc fr">口說 iTalki<br>家教 1 hr</div>
+        <div class="wc fr">閱讀練習<br>B1 文章</div>
+        <div class="wc fr">shadowing<br>30 min</div>
+        <div class="wc fr">口說 iTalki<br>家教 1 hr</div>
+        <div class="wc fr">閱讀練習</div>
+        <div class="wc fr">TCF 閱讀<br>模擬 1 套</div>
+        <div class="wc rst">休息</div>
+
+        <div class="wc rh">傍晚<br>16–17</div>
+        <div class="wc fr">寫作練習<br>短文 200 字</div>
+        <div class="wc fr">口說自錄<br>評分</div>
+        <div class="wc fr">Lingvist 複習</div>
+        <div class="wc fr">寫作練習</div>
+        <div class="wc fr">本週總複習</div>
+        <div class="wc fr">自由輸入</div>
+        <div class="wc rst">休息</div>
+      </div>
+      <p class="section-label">里程碑</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-p2-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#F59E0B"></div>
+          <div class="ms-body"><div class="ms-title">10月底</div><div class="ms-desc">TCF 模擬聽力 + 閱讀確認達 CLB 7 分數帶，口說家教每週 2 次</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p2-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#EF4444"></div>
+          <div class="ms-body"><div class="ms-title">11月底</div><div class="ms-desc">報名 TCF Canada 考試，四技全部模擬一次，找出弱項</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 12月 衝刺 ── -->
+    <div class="tab-pane fade" id="p3">
+      <p class="section-label" style="margin-top:0">衝刺期節奏（每天 5～6 hr，保留體力）</p>
+      <div class="week-grid mb-4">
+        <div class="wc hd"></div>
+        <div class="wc hd">一</div><div class="wc hd">二</div><div class="wc hd">三</div>
+        <div class="wc hd">四</div><div class="wc hd">五</div><div class="wc hd">六</div><div class="wc hd">日</div>
+
+        <div class="wc rh">早上</div>
+        <div class="wc fr">TCF 全套<br>模擬（聽+讀）</div>
+        <div class="wc fr">弱項專攻</div>
+        <div class="wc fr">TCF 全套<br>模擬</div>
+        <div class="wc fr">弱項專攻</div>
+        <div class="wc fr">口說模擬<br>iTalki 批改</div>
+        <div class="wc fr">輕量複習</div>
+        <div class="wc rst">完全休息</div>
+
+        <div class="wc rh">下午</div>
+        <div class="wc fr">模擬檢討<br>+ Lingvist</div>
+        <div class="wc fr">口說練習<br>錄音自評</div>
+        <div class="wc fr">模擬檢討</div>
+        <div class="wc fr">寫作練習<br>+ 批改</div>
+        <div class="wc fr">Lingvist 複習</div>
+        <div class="wc fr">Anki 只</div>
+        <div class="wc rst">完全休息</div>
+      </div>
+      <p class="section-label">考前最後一週</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-p3-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#EF4444"></div>
+          <div class="ms-body"><div class="ms-title">考前 7 天</div><div class="ms-desc">停止做新模擬題，只複習已錯題 + Lingvist 熟字</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p3-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#9CA3AF"></div>
+          <div class="ms-body"><div class="ms-title">考前 2 天</div><div class="ms-desc">完全放鬆，確認考場地點、帶什麼證件、幾點到</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-p3-2" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#059669"></div>
+          <div class="ms-body"><div class="ms-title">1月初</div><div class="ms-desc">TCF Canada — 目標 CLB 7 全科達標</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Lingvist 進度 ── -->
+    <div class="tab-pane fade" id="vocab">
+      <p class="section-label" style="margin-top:0">Lingvist 每月單字累積目標（60 張 / 日，含重複）</p>
+      <div class="vocab-wrap mb-4">
+        <div style="display:grid;grid-template-columns:72px 1fr 1fr 1fr;">
+          <div class="wc hd">月份</div>
+          <div class="wc hd">累積新單字</div>
+          <div class="wc hd">約當程度</div>
+          <div class="wc hd">說明</div>
+
+          <div class="wc rh">7月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~750 字</div>
+          <div class="wc fr">A1 結尾</div>
+          <div class="wc fr" style="font-size:11px">上班期，Lingvist 主要在午休 + 零碎時間</div>
+
+          <div class="wc rh">8月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~1,500 字</div>
+          <div class="wc fr">A2 打底</div>
+          <div class="wc fr" style="font-size:11px">全職學習，新字比例最高（~50%）</div>
+
+          <div class="wc rh">9月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~2,250 字</div>
+          <div class="wc fr">A2+</div>
+          <div class="wc fr" style="font-size:11px">開始 iTalki，詞彙開始能支撐口說</div>
+
+          <div class="wc rh">10月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~3,000 字</div>
+          <div class="wc fr">B1 門口 ✦</div>
+          <div class="wc fr" style="font-size:11px">TCF CLB 7 詞彙量門檻（3,000–4,000）</div>
+
+          <div class="wc rh">11月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~3,750 字</div>
+          <div class="wc fr">B1</div>
+          <div class="wc fr" style="font-size:11px">重複比例升高，專攻熟字鞏固</div>
+
+          <div class="wc rh">12月</div>
+          <div class="wc fr" style="text-align:center;font-weight:700">~4,500 字</div>
+          <div class="wc fr">B1–B2</div>
+          <div class="wc fr" style="font-size:11px">衝刺期，Lingvist 降至維持模式</div>
+
+          <div class="wc rh">1月初</div>
+          <div class="wc bth" style="text-align:center;font-weight:700">~5,000 字</div>
+          <div class="wc bth">庫存跑完 🎯</div>
+          <div class="wc bth" style="font-size:11px">TCF Canada 考試月，Lingvist 總庫全覆蓋</div>
+        </div>
+      </div>
+      <p class="section-label">備註</p>
+      <div class="d-flex flex-column gap-2">
+        <div class="ms-card" data-todo-id="todo-v-0" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#059669"></div>
+          <div class="ms-body"><div class="ms-title">關於重複比例</div><div class="ms-desc">前期（7–9月）新字占比較高（~50%）；後期 spaced repetition 複習比例升，每天實際新字可能只剩 20–30 個，但舊字強化效果更好。</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-v-1" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#3B82F6"></div>
+          <div class="ms-body"><div class="ms-title">Lingvist 總庫</div><div class="ms-desc">法文課程共 5,000 個最常用單字，60 張/日的節奏，約 6–7 個月可以跑完整個庫。1月考前庫存理論上全部覆蓋過一輪。</div></div>
+        </div>
+        <div class="ms-card" data-todo-id="todo-v-2" onclick="toggleTodo(this)">
+          <input type="checkbox" class="todo-check" onclick="event.stopPropagation();toggleTodo(this.closest('.ms-card'))">
+          <div class="ms-dot" style="background:#F59E0B"></div>
+          <div class="ms-body"><div class="ms-title">✦ 關鍵門檻：10月達 3,000 字</div><div class="ms-desc">TCF CLB 7（B2 入門）詞彙量建議 3,000–4,000 字。10月達標後，剩下 3 個月主要是語法、口說和做題策略。</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 資源清單 ── -->
+    <div class="tab-pane fade" id="res">
+      <p class="section-label" style="margin-top:0">法語資源</p>
+      <div class="row g-3 mb-1">
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">課程</div>
+            <div class="res-item">你好法語（A1 / A2）</div>
+            <div class="res-item">Grammaire progressive B1（書）</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">聽力 / 口說</div>
+            <div class="res-item">Français Authentique（YouTube / Podcast）</div>
+            <div class="res-item">TV5Monde 慢速法語</div>
+            <div class="res-item">RFI Savoirs（閱讀 + 聽力）</div>
+            <div class="res-item">iTalki 法語家教（9月起）</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">單字</div>
+            <div class="res-item">Lingvist（60 張 / 日）</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">TCF 模擬</div>
+            <div class="res-item">Centre de langue française（官方樣題）</div>
+            <div class="res-item">Bonjour de France（閱讀練習）</div>
+            <div class="res-item">TCF 練習題（11月起每週 2 套）</div>
+          </div>
+        </div>
+      </div>
+      <p class="section-label">PTE Core 資源（7月用）</p>
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">刷題平台</div>
+            <div class="res-item">E2 Language（題型教學）</div>
+            <div class="res-item">PTE Magic（模擬測驗）</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">重點題型</div>
+            <div class="res-item">Read Aloud（最高分比重）</div>
+            <div class="res-item">Repeat Sentence</div>
+            <div class="res-item">Write Email（替代 SWT）</div>
+            <div class="res-item">Summarize Spoken Text</div>
+          </div>
+        </div>
+      </div>
+      <p class="section-label">工作技能（7月）</p>
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-md-3">
+          <div class="res-card">
+            <div class="res-label">Docker / K8s</div>
+            <div class="res-item"><a href="https://github.com/ericboy0224/learn-docker-and-k8s" target="_blank" rel="noopener" style="color:#92400E;text-decoration:none">learn-docker-and-k8s ↗</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="sendPrompt('幫我設計 PTE Core Read Aloud 的練習方法')">PTE Core 題型攻略 ↗</button>
+        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="sendPrompt('幫我設計 TCF Canada 口說 CLB 7 的練習計劃')">TCF 口說練習計劃 ↗</button>
+      </div>
+    </div>
+
   </div>
-  <div class="section-label">備註</div>
-  <div class="milestone"><div class="ms-dot" style="background:#1D9E75"></div><div><div class="ms-title">關於重複比例</div><div class="ms-desc">前期（7–9月）新字占比較高（~50%）；後期 spaced repetition 複習比例升，每天實際新字可能只剩 20–30 個，但舊字強化效果更好。</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#3B8BD4"></div><div><div class="ms-title">Lingvist 總庫</div><div class="ms-desc">法文課程共 5,000 個最常用單字，60 張/日的節奏，約 6–7 個月可以跑完整個庫。1月考前庫存理論上全部覆蓋過一輪。</div></div></div>
-  <div class="milestone"><div class="ms-dot" style="background:#BA7517"></div><div><div class="ms-title">✦ 關鍵門檻：10月達 3,000 字</div><div class="ms-desc">TCF CLB 7（B2 入門）詞彙量建議 3,000–4,000 字。10月達標後，剩下 3 個月主要是語法、口說和做題策略。</div></div></div>
 </div>
 
-<div id="res" class="phase-content">
-  <div class="section-label">法語資源</div>
-  <div class="resource-grid">
-    <div class="res-card">
-      <div class="res-label">課程</div>
-      <div class="res-item">你好法語（A1/A2）</div>
-      <div class="res-item">Grammaire progressive B1（書）</div>
-    </div>
-    <div class="res-card">
-      <div class="res-label">聽力 / 口說</div>
-      <div class="res-item">Français Authentique（YouTube/Podcast）</div>
-      <div class="res-item">TV5Monde 慢速法語</div>
-      <div class="res-item">RFI Savoirs（閱讀+聽力）</div>
-      <div class="res-item">iTalki 法語家教（9月起）</div>
-    </div>
-    <div class="res-card">
-      <div class="res-label">單字</div>
-      <div class="res-item">
-      <div class="res-item">Lingvist（60 張/日）</div>
-    </div>
-    <div class="res-card">
-      <div class="res-label">TCF 模擬</div>
-      <div class="res-item">Centre de langue française（官方樣題）</div>
-      <div class="res-item">Bonjour de France（閱讀練習）</div>
-      <div class="res-item">TCF練習題（11月起每週2套）</div>
-    </div>
-  </div>
-  <div class="section-label">PTE Core 資源（7月用）</div>
-  <div class="resource-grid">
-    <div class="res-card">
-      <div class="res-label">刷題平台</div>
-      <div class="res-item">E2 Language（題型教學）</div>
-      <div class="res-item">PTE Magic（模擬測驗）</div>
-    </div>
-    <div class="res-card">
-      <div class="res-label">重點題型</div>
-      <div class="res-item">Read Aloud（最高分比重）</div>
-      <div class="res-item">Repeat Sentence</div>
-      <div class="res-item">Write Email（替代 SWT）</div>
-      <div class="res-item">Summarize Spoken Text</div>
-    </div>
-  </div>
-  <button onclick="sendPrompt('幫我設計 PTE Core Read Aloud 的練習方法')" style="margin-top:4px;font-size:12px">PTE Core 題型攻略 ↗</button>
-  <button onclick="sendPrompt('幫我設計 TCF Canada 口說 CLB 7 的練習計劃')" style="margin-top:4px;font-size:12px;margin-left:8px">TCF 口說練習計劃 ↗</button>
-</div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function showPhase(id) {
-  document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.ptab').forEach(el => el.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
-}
+  function toggleTodo(card) {
+    const cb = card.querySelector('.todo-check');
+    cb.checked = !cb.checked;
+    applyDone(card, cb.checked);
+    localStorage.setItem(card.dataset.todoId, cb.checked ? '1' : '0');
+  }
+
+  function applyDone(card, done) {
+    card.classList.toggle('done', done);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-todo-id]').forEach(card => {
+      const done = localStorage.getItem(card.dataset.todoId) === '1';
+      const cb = card.querySelector('.todo-check');
+      if (cb) { cb.checked = done; applyDone(card, done); }
+    });
+  });
 </script>
-</body></html>
+</body>
+</html>
